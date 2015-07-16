@@ -128,6 +128,12 @@ class Violin implements ValidatorContract
         return $this;
     }
 
+    /**
+     * Registers an before callback.
+     *
+     * @param  Closure $closure
+     * @return this
+     */
     public function before(Closure $closure)
     {
         $this->before[] = $closure;
@@ -233,7 +239,7 @@ class Violin implements ValidatorContract
     }
 
     /**
-     * Adds custom field messages
+     * Adds custom field messages.
      *
      * @param array $messages
     */
@@ -243,7 +249,7 @@ class Violin implements ValidatorContract
     }
 
     /**
-     * Add a custom rule
+     * Add a custom rule.
      *
      * @param string $name
      * @param Closure $callback
@@ -507,20 +513,21 @@ class Violin implements ValidatorContract
      */
     protected function extractFieldAliases(array $data)
     {
+        $input = [];
+
         foreach ($data as $field => $fieldRules) {
             $extraction = explode('|', $field);
+            $updatedField = $extraction[0];
 
+            // If the extraction exists, that means a field alias exists.
             if (isset($extraction[1])) {
-                $updatedField = $extraction[0];
-                $alias        = $extraction[1];
-
-                $this->fieldAliases[$updatedField] = $alias;
-                $data[$updatedField] = $data[$field];
-                unset($data[$field]);
+                $this->fieldAliases[$updatedField] = $extraction[1];
             }
+
+            $input[$updatedField] = $data[$field];
         }
 
-        return $data;
+        return $input;
     }
 
     /**
